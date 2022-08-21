@@ -24,11 +24,11 @@ def load_annotates():
 
 def show_annotate(an):
     path,labels,segs = 'D2022.07.30_S02010_I3263_P/WELL02/'+an['path'], an['labels'],an['segs']
-    image = cv2.imread(path)
+    image = cv2.resize( cv2.imread(path),(400,400) ) # 归一化统计一图片尺寸
     # 绘制标注
     for label,seg in zip(labels,segs):
         color = COLORS[label]
-        seg = (np.array(seg)*2).reshape([1,-1,2])
+        seg = (np.array(seg)).reshape([1,-1,2])
         image = cv2.polylines(image, seg, True, color, 2 )
     plt.imshow(image)
     
@@ -37,7 +37,7 @@ def show_annotate(an):
         
 def get_moment(seg):
     # idx 表示这条曲线在标注中的位置
-    M = cv2.moments( (np.array(seg)*2).astype(np.int32).reshape((1,-1,2)) );
+    M = cv2.moments( np.array(seg).astype(np.int32).reshape((1,-1,2)) );
     return [int(M['m00']), int(round(M["m10"]/M['m00'])) ,int(round(M["m01"]/M['m00'])) ]
 
 def moments_pn(ans):
